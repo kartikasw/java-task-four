@@ -40,7 +40,7 @@ public class MovieServiceTest {
         movieRequest.setGenre("Action");
         movieRequest.setDuration("2h");
         movieRequest.setDirector("Christopher Nolan");
-        movieRequest.setRating("A+");
+        movieRequest.setRating("A");
 
         movie = movieRequest.mapToEntity();
     }
@@ -74,12 +74,22 @@ public class MovieServiceTest {
     }
 
     @Test
-    public void testAddMovie_InvalidRating() {
+    public void testAddMovie_EmptyRating() {
         movieRequest.setRating("");
 
         var thrown = assertThrows(BusinessException.class, () -> movieService.addMovie(movieRequest));
 
         assertEquals(String.format(ErrorMessage.ERROR_MANDATORY_FIELD, Movie.RATING_FIELD), thrown.getMessage());
+        verify(repository, never()).addMovie(any(Movie.class));
+    }
+
+    @Test
+    public void testAddMovie_InvalidRating() {
+        movieRequest.setRating("-");
+
+        var thrown = assertThrows(BusinessException.class, () -> movieService.addMovie(movieRequest));
+
+        assertEquals(String.format(ErrorMessage.ERROR_INVALID_FORMAT, Movie.RATING_FIELD), thrown.getMessage());
         verify(repository, never()).addMovie(any(Movie.class));
     }
 }

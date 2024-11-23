@@ -47,6 +47,11 @@ public class MovieService implements IMovieService {
             var error = String.format(ErrorMessage.ERROR_MANDATORY_FIELD, Movie.RATING_FIELD);
             throw new BusinessException(error);
         }
+
+        if (!movie.getRating().matches("[a-zA-Z]")) {
+            var error = String.format(ErrorMessage.ERROR_INVALID_FORMAT, Movie.RATING_FIELD);
+            throw new BusinessException(error);
+        }
     }
 
 }

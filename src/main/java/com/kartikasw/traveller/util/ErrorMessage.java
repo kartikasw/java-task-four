@@ -10,4 +10,6 @@ public class ErrorMessage {
 
     public static final String ERROR_ALREADY_EXIST = "%s already exists.";
 
+    public static final String ERROR_INVALID_FORMAT = "%s is in invalid format.";
+
 }
