@@ -17,6 +17,18 @@
 
     - **For the Student Controller**:  
       Set `spring.profiles.active=student`
+      
+3. **Run the Test Cases:**
+   
+   ```sh
+   ./mvnw test
+   ```
+
+4. **Run the Program:**
+   
+   ```sh
+   ./mvnw spring-boot:run
+   ```
   
 ## API Routes
 
