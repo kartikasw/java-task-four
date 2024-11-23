@@ -11,14 +11,16 @@ import com.kartikasw.traveller.util.ErrorMessage;
 
 @Repository
 public class MovieRepository {
-    private final List<Movie> movies = new ArrayList<>();
+    public final List<Movie> movies = new ArrayList<>();
 
-    public void addMovie(Movie movie) {
+    public Movie addMovie(Movie movie) {
         if (movies.stream().anyMatch(m -> m.getTitle().equalsIgnoreCase(movie.getTitle()))) {
             var error = String.format(ErrorMessage.ERROR_ALREADY_EXIST, movie.getTitle());
             throw new BusinessException(error);
         }
 
         movies.add(movie);
+
+        return movie;
     }
 }

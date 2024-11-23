@@ -1,7 +1,5 @@
 package com.kartikasw.traveller.apps.movie.service;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +26,8 @@ public class MovieService implements IMovieService {
     public GeneralResponse<MetadataResponse, Movie> addMovie(MovieRequest movie) {
         validateMovie(movie);
         var entity = movie.mapToEntity();
-        repository.addMovie(entity);
-        return ResponseBuilder.responseBuilder(entity);
+        var result = repository.addMovie(entity);
+        return ResponseBuilder.responseBuilder(result);
     }
 
     private void validateMovie(MovieRequest movie) {

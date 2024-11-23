@@ -2,56 +2,84 @@ package com.kartikasw.traveller.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import com.kartikasw.traveller.apps.movie.entity.Movie;
+import com.kartikasw.traveller.apps.movie.model.MovieRequest;
+import com.kartikasw.traveller.apps.movie.repository.MovieRepository;
 import com.kartikasw.traveller.apps.movie.service.MovieService;
 import com.kartikasw.traveller.exception.BusinessException;
 import com.kartikasw.traveller.util.ErrorMessage;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class MovieServiceTest {
+
+    @InjectMocks
     private MovieService movieService;
+
+    @Mock
+    private MovieRepository repository;
+
+    private MovieRequest movieRequest;
     private Movie movie;
 
     @BeforeEach
     void setUp() {
-        movieService = new MovieService();
+        MockitoAnnotations.openMocks(this);
 
-        movie = new Movie();
-        movie.setTitle("Inception");
-        movie.setGenre("Action");
-        movie.setDuration("2h");
-        movie.setDirector("Christopher Nolan");
-        movie.setRating("A+");
+        movieRequest = new MovieRequest();
+        movieRequest.setTitle("Inception");
+        movieRequest.setGenre("Action");
+        movieRequest.setDuration("2h");
+        movieRequest.setDirector("Christopher Nolan");
+        movieRequest.setRating("A+");
+
+        movie = movieRequest.mapToEntity();
     }
 
     @Test
     void testAddMovie_Success() {
-        var response = movieService.addMovie(movie);
+        when(repository.addMovie(any(Movie.class))).thenReturn(movie);
 
-        assertNotNull(response);
-        assertEquals(movie, response.getData());
+        var result = movieService.addMovie(movieRequest);
+
+        assertNotNull(result);
+        assertEquals(movie, result.getData());
+        verify(repository, times(1)).addMovie(any(Movie.class));
     }
 
     @Test
-    void testAddMovie_DuplicateTitle_ShouldThrowException() {
-        movieService.addMovie(movie);
+    void testAddMovie_DuplicateTitle() {
+        when(repository.addMovie(any(Movie.class)))
+                .thenReturn(movie)
+                .thenThrow(new BusinessException(String.format(ErrorMessage.ERROR_ALREADY_EXIST, movie.getTitle())));
 
-        Movie duplicateMovie = movie;
+        var firstResponse = movieService.addMovie(movieRequest);
 
-        BusinessException thrown = assertThrows(BusinessException.class, () -> movieService.addMovie(duplicateMovie));
-        assertEquals(String.format(ErrorMessage.ERROR_ALREADY_EXIST, duplicateMovie.getTitle()), thrown.getMessage());
+        assertNotNull(firstResponse);
+        assertEquals(movie, firstResponse.getData());
+
+        var thrown = assertThrows(BusinessException.class, () -> movieService.addMovie(movieRequest));
+
+        assertEquals(String.format(ErrorMessage.ERROR_ALREADY_EXIST, movie.getTitle()), thrown.getMessage());
+        verify(repository, times(2)).addMovie(any(Movie.class));
     }
 
     @Test
     public void testAddMovie_InvalidRating() {
-        movie.setRating("");
+        movieRequest.setRating("");
 
-        BusinessException exception = assertThrows(BusinessException.class, () -> {
-            movieService.addMovie(movie);
-        });
+        var thrown = assertThrows(BusinessException.class, () -> movieService.addMovie(movieRequest));
 
-        assertEquals(String.format(ErrorMessage.ERROR_MANDATORY_FIELD, Movie.RATING_FIELD), exception.getMessage());
+        assertEquals(String.format(ErrorMessage.ERROR_MANDATORY_FIELD, Movie.RATING_FIELD), thrown.getMessage());
+        verify(repository, never()).addMovie(any(Movie.class));
     }
 }
