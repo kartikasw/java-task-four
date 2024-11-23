@@ -1,4 +1,4 @@
-package com.kartikasw.traveller.entity;
+package com.kartikasw.traveller.apps.movie.entity;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

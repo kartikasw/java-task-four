@@ -1,6 +1,6 @@
-package com.kartikasw.traveller.service;
+package com.kartikasw.traveller.apps.movie.service;
 
-import com.kartikasw.traveller.entity.Movie;
+import com.kartikasw.traveller.apps.movie.entity.Movie;
 import com.kartikasw.traveller.model.GeneralResponse;
 import com.kartikasw.traveller.model.MetadataResponse;
 

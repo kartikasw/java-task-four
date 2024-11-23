@@ -2,7 +2,9 @@ package com.kartikasw.traveller.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import com.kartikasw.traveller.entity.Movie;
+
+import com.kartikasw.traveller.apps.movie.entity.Movie;
+import com.kartikasw.traveller.apps.movie.service.MovieService;
 import com.kartikasw.traveller.exception.BusinessException;
 import com.kartikasw.traveller.util.ErrorMessage;
 
